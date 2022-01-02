@@ -10,7 +10,8 @@ class Signatures:
         return private_key, private_key.public_key()
 
     def sign(self, message, private):
-        sig = private.sign(message,
+        inner_message = bytes(str(message), 'utf-8')
+        sig = private.sign(inner_message,
                            padding.PSS(
                                mgf=padding.MGF1(hashes.SHA256()),
                                salt_length=padding.PSS.MAX_LENGTH
@@ -19,10 +20,11 @@ class Signatures:
         return sig
 
     def verify(self, message, signature, public):
+        inner_message = bytes(str(message), 'utf-8')
         try:
             public.verify(
                 signature,
-                message,
+                inner_message,
                 padding.PSS(
                     mgf=padding.MGF1(hashes.SHA256()),
                     salt_length=padding.PSS.MAX_LENGTH
