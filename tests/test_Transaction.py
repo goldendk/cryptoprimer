@@ -73,3 +73,12 @@ class TestTx(TestCase):
         tx.sign(self.pr2)
 
         self.assertFalse(tx.is_valid(), "Negative values should not be allowed.")
+
+    def test_modified_tx(self):
+        tx = Tx()
+        tx.add_input(self.pu1, 1)
+        tx.add_output(self.pu2, 1)
+        tx.sign(self.pr1)
+        tx.outputs[0]["address"] = self.pu3  # changed transaction should not validate.
+
+        self.assertFalse(tx.is_valid(), "Changed transactions after signing should not validate.")
