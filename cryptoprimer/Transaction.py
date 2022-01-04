@@ -7,10 +7,10 @@ class Tx:
     sig_util = Signatures()
 
     def __init__(self):
-        self.inputs = []
-        self.outputs = []
-        self.sigs = []
-        self.reqd = []
+        self.inputs = []  # public key, amount
+        self.outputs = []  # public key, amount
+        self.sigs = []  # string-like
+        self.reqd = []  # public keys
 
     def add_input(self, from_addr, amount):
         self.inputs.append({"address": from_addr,
