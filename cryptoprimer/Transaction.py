@@ -105,6 +105,20 @@ class Tx:
                 return False
         return True
 
+    def __repr__(self):
+        reprstr = "INPUTS:"
+        for i in self.inputs:
+            reprstr += str(str(i["address"]) + ":::" + str(i["amount"]))
+        reprstr += "OUTPUTS:"
+        for o in self.outputs:
+            reprstr += str(str(o["address"]) + ":::" + str(o["amount"]))
+
+        for s in self.sigs:
+            reprstr += str(s)
+        for r in self.reqd:
+            reprstr += str(r)
+        reprstr += ":::END"
+        return reprstr
 
 class NegativeAmountException(Exception):
     def __init__(self):

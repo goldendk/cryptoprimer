@@ -20,11 +20,9 @@ class Block:
 
     def __init__(self, data, previousBlock):
         self.data = data
-
         if previousBlock is not None:
             self.prevBlock = previousBlock
             self.prevHash = previousBlock.compute_hash()
-        pass
 
     def compute_hash(self):
         digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
@@ -32,3 +30,8 @@ class Block:
         digest.update(bytes(str(self.prevHash), "utf8"))
         the_hash = digest.finalize()
         return the_hash
+
+    def is_valid(self):
+        if self.prevBlock is None:
+            return True
+        return self.prevBlock.compute_hash() == self.prevHash
