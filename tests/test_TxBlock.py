@@ -60,7 +60,7 @@ class TestTxBlock(TestCase):
         block.add_tx(tx3)
 
         tx4 = Tx()
-        # pu1 sends 1 coin to pu2 with pu3 as escrowe.
+        # pu1 sends 1 coin to pu2 with pu3 as escrow.
         tx4.add_input(self.pu1, 1)
         tx4.add_output(self.pu2, 1)
         tx4.add_required(self.pu3)
