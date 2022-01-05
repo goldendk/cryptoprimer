@@ -13,13 +13,11 @@ class Tx:
         self.reqd = []  # public keys
 
     def add_input(self, from_addr, amount):
-        self.inputs.append({"address": from_addr,
-                            "amount": amount})
+        self.inputs.append((from_addr, amount))
         pass
 
     def add_output(self, to_addr, amount):
-        self.outputs.append({"address": to_addr,
-                             "amount": amount})
+        self.outputs.append((to_addr, amount))
         pass
 
     def add_required(self, addr):
@@ -53,9 +51,10 @@ class Tx:
             logging.warning(f"Output amount is negative: {outputQty}")
             return False
 
-        if outputQty > inputQty:
-            print(f"Output {outputQty} is greater than input {inputQty}.")
-            return False
+        # Disabled since this should be left up to the miners.
+        # if outputQty > inputQty:
+        #    print(f"Output {outputQty} is greater than input {inputQty}.")
+        #    return False
 
         has_req_sig = self.check_required_signatures()
         has_input_sig = self.check_input_signatures()
@@ -65,7 +64,7 @@ class Tx:
     def __compute_qty(self, list):
         sum = 0
         for i in list:
-            qty = i["amount"]
+            qty = i[1]
             if qty < 0:
                 raise NegativeAmountException()
             sum += qty
@@ -97,8 +96,7 @@ class Tx:
     def check_input_signatures(self):
         message = self.__gather()
         for node in self.inputs:
-            addr = node["address"]
-            amount = node["amount"]
+            addr, amount = node
             found = self.__check_is_signed(addr, message)
             if not found:
                 logging.warning("Did not find input signature: " + repr(addr))
@@ -108,10 +106,10 @@ class Tx:
     def __repr__(self):
         reprstr = "INPUTS:"
         for i in self.inputs:
-            reprstr += str(str(i["address"]) + ":::" + str(i["amount"]))
+            reprstr += str(str(i[0]) + ":::" + str(i[1]))
         reprstr += "OUTPUTS:"
         for o in self.outputs:
-            reprstr += str(str(o["address"]) + ":::" + str(o["amount"]))
+            reprstr += str(str(o[0]) + ":::" + str(o[1]))
 
         for s in self.sigs:
             reprstr += str(s)
@@ -119,6 +117,7 @@ class Tx:
             reprstr += str(r)
         reprstr += ":::END"
         return reprstr
+
 
 class NegativeAmountException(Exception):
     def __init__(self):
