@@ -1,11 +1,10 @@
 import pickle
+import time
 from unittest import TestCase
 
 from cryptoprimer.Signatures import Signatures
 from cryptoprimer.Transaction import Tx
 from cryptoprimer.TxBlock import TxBlock
-
-
 
 
 class TestTxBlock(TestCase):
@@ -14,8 +13,6 @@ class TestTxBlock(TestCase):
     pr2, pu2 = sig_util.generate_keys()
     pr3, pu3 = sig_util.generate_keys()
     pr4, pu4 = sig_util.generate_keys()
-
-
 
     def test_save_and_load_transaction_to_file(self):
         tx = Tx()
@@ -56,6 +53,12 @@ class TestTxBlock(TestCase):
 
         tx4 = self.build_tx4()
         block.add_tx(tx4)
+        start = time.time()
+        print(block.find_nonce())
+        elapsed = time.time() - start
+        self.assertGreater(elapsed, 3, "Mining is too fast")
+        print(f"Elapsed time: {elapsed} seconds.")
+        self.assertTrue(block.good_nonce(), "Nonce on block should be good")
 
         self.assertTrue(block.is_valid(), "Block should be valid.")
 
@@ -73,6 +76,8 @@ class TestTxBlock(TestCase):
 
         for b in [root, block, load_block, load_block.prevBlock]:
             self.assertTrue(b.is_valid(), "Not valid, but should be : " + repr(b))
+
+        self.assertTrue(load_block.good_nonce(), "Nonce is bad after save and load.")
 
         block2 = TxBlock(block)
         tx = Tx()
@@ -133,8 +138,6 @@ class TestTxBlock(TestCase):
 
         self.assertFalse(block5.is_valid(), "Greedy miners should not be allowed.")
 
-
-
     def build_tx3(self):
         tx3 = Tx()
         # pu3 sends pu1 1 coin. 0.1 coins is a fee to the network.
@@ -160,6 +163,3 @@ class TestTxBlock(TestCase):
         tx4.sign(self.pr1)
         tx4.sign(self.pr3)
         return tx4
-
-
-
